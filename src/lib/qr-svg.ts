@@ -40,7 +40,9 @@ function buildModulesPath(m: Matrix, style: QrDotStyle): string {
     for (let c = 0; c < m.size; c++) {
       if (!m.get(r, c) || isFinderModule(r, c, m.size)) continue;
       if (style === "dots") {
-        parts.push(`M${c + 0.5},${r + 0.08} a0.42,0.42 0 1 0 0,0.84 a0.42,0.42 0 1 0 0,-0.84 z`);
+        // Radius 0.53 slightly overlaps adjacent dots so scanners read
+        // module runs reliably (verified with jsQR at all error levels).
+        parts.push(`M${c + 0.5},${r - 0.03} a0.53,0.53 0 1 0 0,1.06 a0.53,0.53 0 1 0 0,-1.06 z`);
       } else if (style === "rounded") {
         const rad = 0.3;
         parts.push(

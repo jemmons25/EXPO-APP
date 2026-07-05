@@ -39,9 +39,15 @@ async function renderLogo(width: number, height: number, fg: string): Promise<Bu
 
 async function fetchThumbnail(url: string, size: number): Promise<Buffer | null> {
   try {
-    const res = await fetch(url);
-    if (!res.ok) return null;
-    const buf = Buffer.from(await res.arrayBuffer());
+    let buf: Buffer;
+    if (url.startsWith("data:")) {
+      const base64 = url.split(",")[1] ?? "";
+      buf = Buffer.from(base64, "base64");
+    } else {
+      const res = await fetch(url);
+      if (!res.ok) return null;
+      buf = Buffer.from(await res.arrayBuffer());
+    }
     return await sharp(buf).resize(size, size, { fit: "cover" }).png().toBuffer();
   } catch {
     return null;
@@ -119,9 +125,10 @@ export async function buildPkPass(card: CardData): Promise<Buffer> {
   };
 
   if (card.avatarUrl) {
-    const avatarAbs = card.avatarUrl.startsWith("http")
-      ? card.avatarUrl
-      : `${process.env.NEXT_PUBLIC_APP_URL}${card.avatarUrl}`;
+    const avatarAbs =
+      card.avatarUrl.startsWith("http") || card.avatarUrl.startsWith("data:")
+        ? card.avatarUrl
+        : `${process.env.NEXT_PUBLIC_APP_URL}${card.avatarUrl}`;
     const [thumb1, thumb2] = await Promise.all([
       fetchThumbnail(avatarAbs, 90),
       fetchThumbnail(avatarAbs, 180),

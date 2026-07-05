@@ -20,11 +20,14 @@ export function buildGoogleWalletUrl(card: CardData): string {
   const objectId = `${issuerId}.card_${card.id.replace(/-/g, "")}`;
   const profileUrl = publicCardUrl(card.slug);
 
-  const avatarAbs = card.avatarUrl
-    ? card.avatarUrl.startsWith("http")
-      ? card.avatarUrl
-      : `${process.env.NEXT_PUBLIC_APP_URL}${card.avatarUrl}`
-    : null;
+  // Google Wallet requires a publicly reachable HTTPS URL for images, so
+  // data-URI avatars (the local-storage default) are skipped.
+  const avatarAbs =
+    card.avatarUrl && !card.avatarUrl.startsWith("data:")
+      ? card.avatarUrl.startsWith("http")
+        ? card.avatarUrl
+        : `${process.env.NEXT_PUBLIC_APP_URL}${card.avatarUrl}`
+      : null;
 
   const genericObject = {
     id: objectId,
