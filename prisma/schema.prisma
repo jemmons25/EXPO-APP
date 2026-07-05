@@ -1,0 +1,110 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+// SQLite for local dev. For production swap provider to "postgresql"
+// and point DATABASE_URL at your hosted Postgres (Supabase, Neon, etc).
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String?  @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  cards       Card[]
+  loginTokens LoginToken[]
+
+  @@map("users")
+}
+
+model LoginToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at")
+  usedAt    DateTime? @map("used_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("login_tokens")
+}
+
+model Card {
+  id       String  @id @default(uuid())
+  userId   String  @map("user_id")
+  slug     String  @unique
+  label    String?
+  fullName String  @map("full_name")
+  jobTitle String? @map("job_title")
+  company  String?
+  email    String?
+  phone    String?
+  website  String?
+  linkedin  String?
+  twitter   String?
+  instagram String?
+  location  String?
+  pronouns  String?
+  tagline   String?
+  avatarUrl String? @map("avatar_url")
+
+  // Design
+  style          String  @default("minimal")
+  bgColor        String  @default("#1a1a1a") @map("bg_color")
+  bgColor2       String? @map("bg_color_2")
+  accentColor    String  @default("#6366f1") @map("accent_color")
+  textColor      String  @default("#ffffff") @map("text_color")
+  fontFamily     String  @default("Inter") @map("font_family")
+  fontSizeScale  String  @default("regular") @map("font_size_scale")
+  layout         String  @default("left")
+  borderRadius   String  @default("rounded") @map("border_radius")
+  shadowStyle    String  @default("soft") @map("shadow_style")
+  iconSet        String  @default("minimal") @map("icon_set")
+  bgImageUrl     String? @map("bg_image_url")
+  bgImageOpacity Float   @default(1.0) @map("bg_image_opacity")
+
+  // QR
+  qrShowOnBack Boolean @default(true) @map("qr_show_on_back")
+  qrColor      String  @default("#ffffff") @map("qr_color")
+  qrBgColor    String  @default("transparent") @map("qr_bg_color")
+  qrErrorLevel String  @default("M") @map("qr_error_level")
+  qrStyle      String  @default("square") @map("qr_style")
+  qrLogoUrl    String? @map("qr_logo_url")
+  qrEmbedLogo  Boolean @default(false) @map("qr_embed_logo")
+
+  // Visibility toggles, stored as JSON string
+  visibleFields String @default("{\"email\":true,\"phone\":true,\"website\":true,\"linkedin\":true,\"twitter\":false,\"instagram\":false,\"location\":true,\"pronouns\":false,\"tagline\":true}") @map("visible_fields")
+
+  visibility String  @default("public") // public | link-only | private
+  isActive   Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user   User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  events CardEvent[]
+
+  @@index([userId])
+  @@map("cards")
+}
+
+model CardEvent {
+  id        String   @id @default(uuid())
+  cardId    String   @map("card_id")
+  eventType String   @map("event_type") // view | qr_scan | wallet_add_apple | wallet_add_google | vcf_download | link_click
+  source    String? // direct | qr | share | wallet
+  userAgent String?  @map("user_agent")
+  ipHash    String?  @map("ip_hash")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  card Card @relation(fields: [cardId], references: [id], onDelete: Cascade)
+
+  @@index([cardId, eventType])
+  @@map("card_events")
+}
