@@ -2,7 +2,39 @@
 
 A science-backed health-optimization app. Scan food and learn what's really in it, find clean/whole-food sources near you, and get personalized daily protocols for sun, sleep, protein, and hormone support — every recommendation graded by evidence quality, with mainstream (CDC/FDA/USDA) guidance and newer research shown side-by-side.
 
-This repository currently holds the **researched product specification** — the definitive plan built from primary research into the science, the competitor landscape (chiefly Yuka), the available data/APIs, and 2026 health-app market benchmarks. It is the blueprint for building the app.
+This repository holds both the **Expo/React Native app** (in `app/` and `src/`) and the **researched product specification** (in `docs/`) it was built from.
+
+## Running the app
+
+```bash
+npm install            # install dependencies
+npx expo start         # start the dev server, then press i / a, or scan the QR in Expo Go
+```
+
+Requires Node 18+. The app targets iOS and Android (dark-mode first). Camera scanning and location (for the sun calculator) use on-device permissions; the scanner also accepts a typed barcode or a sample product so it works without a physical barcode.
+
+Useful scripts: `npm run typecheck` (tsc), `npx expo export --platform ios` (verify the bundle).
+
+## Project structure
+
+```
+app/                     expo-router routes
+  _layout.tsx            fonts, providers, root stack
+  index.tsx              onboarding gate → tabs
+  onboarding.tsx         4-step personalization (goals, basics, skin type)
+  (tabs)/                Home, Scan, Find, Learn, Me + floating tab bar
+  learn/[slug].tsx       layered explainer detail (summary → deep dive → sources)
+src/
+  theme/                 Biolume palette, typography, spacing, spring presets
+  components/            animated library (ScoreRing, ActivityRings, SunArc, Aurora, …)
+  lib/                   scoring engine, Open Food Facts + UV clients, solar/nutrition, storage
+  data/                  ingredient catalog, learn topics, news, raw-milk laws, food sources
+docs/                    the researched product spec (see below)
+```
+
+## The specification
+
+The `docs/` folder is the definitive plan, built from primary research into the science, the competitor landscape (chiefly Yuka), the available data/APIs, and 2026 health-app market benchmarks.
 
 ## Start here
 
