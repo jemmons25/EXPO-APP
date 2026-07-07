@@ -1,0 +1,59 @@
+{
+  "expo": {
+    "name": "TrueHealth",
+    "slug": "truehealth",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "truehealth",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#0A0E14",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#0A0E14",
+      "resizeMode": "contain",
+      "image": "./assets/splash-icon.png"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.truehealth.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "TrueHealth uses your camera to scan food barcodes and ingredient labels.",
+        "NSLocationWhenInUseUsageDescription": "TrueHealth uses your location to calculate your daily sun/vitamin-D window and to find clean food sources near you."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0A0E14",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "package": "com.truehealth.app",
+      "predictiveBackGestureEnabled": false,
+      "permissions": ["CAMERA", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font",
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "TrueHealth uses your camera to scan food barcodes and ingredient labels."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "TrueHealth uses your location to calculate your daily sun window and find clean food near you."
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
